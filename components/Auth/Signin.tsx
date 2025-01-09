@@ -10,6 +10,34 @@ const Signin = () => {
     password: "",
   });
   const [isHovered, setIsHovered] = useState(false)
+  const [message, setMessage] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+        const response = await fetch(`http://127.0.0.1:5000/api/signin`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Importante per inviare i cookie di sessione
+        body: JSON.stringify({ data }),
+      });
+    
+      const result = await response.json();
+      console.log(result); // Debug
+      
+      if (!response.ok) {
+        console.error('Sign in failed:', result.message);
+      } else {
+        console.log('Sign in successful', result);
+        window.location.href = '/'; // Redirect to home
+      }
+      
+    } catch (error) {
+      setMessage(`Error during login`);
+    }
+  };
 
   return (
     <>
@@ -49,7 +77,7 @@ const Signin = () => {
             viewport={{ once: true }}
             className="animate_top flex justify-between"
           >
-            {/* Left Section: Sign Up Button */}
+            {/* Left Section: Sign Up */}
             <div className="hidden md:flex flex-1 justify-center items-center bg-white p-7.5 shadow-solid-8 dark:bg-black dark:border dark:border-strokedark xl:px-15 xl:pt-15">
               <motion.div
                 variants={{
@@ -110,7 +138,7 @@ const Signin = () => {
                 </h2>
 
                 {/* Sign In Form */}
-                <form>
+                <form onSubmit={handleSubmit}>
                   {/* Email and Password Fields */}
                   <div className="w-full mb-4.5 flex flex-col gap-7.5 lg:mb-6.5">
                     <div className="flex flex-col gap-3 lg:flex-1">
@@ -121,6 +149,7 @@ const Signin = () => {
                         Email
                       </label>
                       <input
+                        required
                         type="text"
                         placeholder="Email"
                         name="email"
@@ -137,6 +166,7 @@ const Signin = () => {
                         Password
                       </label>
                       <input
+                        required
                         type="password"
                         placeholder="Password"
                         name="password"
@@ -156,6 +186,7 @@ const Signin = () => {
                   {/* Sign In Button */}
                   <div className="flex flex-col gap-5 items-center mb-6">
                     <button
+                      type="submit"
                       aria-label="login with email and password"
                       className="inline-flex w-full items-center justify-center gap-2.5 rounded-full bg-black px-6 py-3 font-medium text-white transition-colors duration-300 ease-in-out hover:bg-gray-800 dark:bg-btndark dark:hover:bg-blackho"
                       onMouseEnter={() => setIsHovered(true)}
@@ -178,6 +209,7 @@ const Signin = () => {
                         />
                       </motion.svg>
                     </button>
+                    {message && <p className="mt-2 text-center">{message}</p>}
                     <div className="block md:hidden">
                       <p>Don't you have an account? <a href="/auth/signup" className="text-primary hover:text-primaryho">signup</a></p>
                     </div>
