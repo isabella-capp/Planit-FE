@@ -1,14 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-const TimeSelector = () => {
+export type SelectedTimes = {
+  startTime: string;
+  endTime: string;
+}
+
+interface TimeProps {
+  onTimeSelect: (times: SelectedTimes) => void
+}
+
+const TimeSelector = ({onTimeSelect}: TimeProps) => {
     const [view, setView] = useState<"dates-times" | "dates-only">("dates-times");
-    const [startTime, setStartTime] = useState('9:00');
-    const [endTime, setEndTime] = useState('20:00');
+    const[selectedTimes, setSelectedTimes] = useState<SelectedTimes>({
+        startTime: '9:00',
+        endTime: '20:00',
+    })
 
     const timeSlots = Array.from({ length: 24 }, (_, i) => {
         const hour = i + 1;
         return `${hour}:00`
     });
+
+    useEffect(() => {
+        onTimeSelect(selectedTimes)
+      }, [selectedTimes, onTimeSelect])
+    
 
     return (
         <>
@@ -42,7 +58,7 @@ const TimeSelector = () => {
                 <h3 className="text-md font-medium mb-2 text-black dark:text-white">What times might work?</h3>
                 <div className="flex flex-row gap-5">
                     <select
-                        onChange={(event) => setStartTime(event.target.value)}
+                        onChange={(event) => setSelectedTimes({ ...selectedTimes, startTime: event.target.value })}
                         defaultValue="9:00"
                         className="text-center border-2 rounded-lg border-stroke p-3 dark:text-white dark:bg-btndark dark:border-strokedark"
                     >
@@ -51,7 +67,7 @@ const TimeSelector = () => {
                         ))}
                     </select>
                     <select
-                        onChange={(event) => setEndTime(event.target.value)}
+                        onChange={(event) => setSelectedTimes({ ...selectedTimes, endTime: event.target.value })}
                         defaultValue={"20:00"}
                         className="text-center border-2 rounded-lg border-stroke p-3 dark:text-white dark:bg-btndark dark:border-strokedark"
                     >

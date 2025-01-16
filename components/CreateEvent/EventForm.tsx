@@ -1,9 +1,10 @@
 "use client"
 import { ArrowRight } from "lucide-react";
-import TimeSelector from "./TimeSelector";
+import TimeSelector, { type SelectedTimes } from "./TimeSelector";
 import DateSelector, { type SelectionMode } from "./DateSelector";
 import { Calendar, type SelectedDates} from "./Calendar";
 import { useState } from "react";
+
 
 const EventForm = () => {
     const [mode, setMode] = useState<SelectionMode>('specific')
@@ -15,10 +16,18 @@ const EventForm = () => {
         },
       })
 
-      console.log(selectedDates);
+    const[SelectedTimes, setSelectedTimes] = useState<SelectedTimes>({
+        startTime: '9:00',
+        endTime: '20:00',
+    })
 
-      const handleDatesChange = (dates: SelectedDates) => {
+
+    const handleDatesChange = (dates: SelectedDates) => {
         setSelectedDates(dates)
+    }
+
+    const handleTimeChange = (times: SelectedTimes) => {
+        setSelectedTimes(times)
     }
     
     return (
@@ -37,7 +46,7 @@ const EventForm = () => {
                     />
                 </div>
                
-                <TimeSelector/>
+                <TimeSelector onTimeSelect={handleTimeChange}/>
                 
                 <div className="mb-7.5 flex flex-col gap-3">
                     <label className="font-medium text-black dark:text-white">What dates might work?</label>
