@@ -1,11 +1,21 @@
 "use client";
+
 import { motion } from "framer-motion";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import EventForm from "./EventForm";
 import { SendHorizontal } from "lucide-react";
+import { useRouter } from "next/navigation";
+
 
 const CreateEvent = () => {
+  const router = useRouter();
+  
+  const navigateToEvent = (id: string): void => {
+    if(router)
+      router.push(`/event/${id}`);
+  }
+  
   return (
     <>
       {/* <!-- ===== Contact Start ===== --> */}
@@ -90,15 +100,21 @@ const CreateEvent = () => {
                     placeholder="EventID here..."
                     className="w-full rounded-lg border-2 border-stroke px-6 py-3 text-sm md:text-base shadow-solid-11 focus:border-manatee focus:outline-none dark:border-strokedark dark:bg-black dark:shadow-none dark:focus:border-waterloo"
                     required
+                    id="event-id-input"
                   />
                   <button
                     aria-label="signup to newsletter"
                     className="absolute right-2 top-1/2 -translate-y-1/2 p-2 sm:p-4"
+                    onClick={() => {
+                      const input = document.getElementById("event-id-input") as HTMLInputElement;
+                      if (input?.value) {
+                        navigateToEvent(input.value);
+                      }
+                    }}
                   >
                     <SendHorizontal className="hover:text-[#0088cc]" />
                   </button>
                 </div>
-
               </div>
             </div>
             <div className="flex-1">
@@ -119,7 +135,7 @@ const CreateEvent = () => {
                 viewport={{ once: true }}
                 className="animate_top w-full rounded-lg bg-white p-7.5 shadow-solid-8 dark:border dark:border-strokedark dark:bg-black xl:p-15"
               >
-                <EventForm />
+                <EventForm navigator={navigateToEvent} />
               </motion.div>
             </div>
           </div>
