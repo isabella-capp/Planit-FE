@@ -16,4 +16,18 @@ export function generateTimeSlots(startTime: string, endTime: string): string[] 
     };
   }
   
+
+  export function generateDatesInRange(from: Date, to: Date): string[] {
+    const dateArray = [];
+    let currentDate = new Date(from);
+    currentDate.setHours(12, 0, 0, 0);
+    let toDate = new Date(to);
+    toDate.setHours(12, 0, 0, 0);
+    
+    while (currentDate <= toDate) {
+      dateArray.push(currentDate.toISOString().split("T")[0]);
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    return dateArray;
+  }
   
