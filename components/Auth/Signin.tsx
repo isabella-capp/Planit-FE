@@ -6,11 +6,13 @@ import { useState } from "react";
 
 const Signin = () => {
   const [data, setData] = useState({
-    email: "",
+    username: "",
     password: "",
   });
   const [isHovered, setIsHovered] = useState(false)
   const [message, setMessage] = useState('');
+
+  console.log(data);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,7 +23,7 @@ const Signin = () => {
           'Content-Type': 'application/json',
         },
         credentials: 'include', // Importante per inviare i cookie di sessione
-        body: JSON.stringify({ data }),
+        body: JSON.stringify(data),
       });
     
       const result = await response.json();
@@ -31,7 +33,7 @@ const Signin = () => {
         console.error('Sign in failed:', result.message);
       } else {
         console.log('Sign in successful', result);
-        window.location.href = '/'; // Redirect to home
+        window.location.href = '/newevent'; // Redirect to home
       }
       
     } catch (error) {
@@ -143,18 +145,18 @@ const Signin = () => {
                   <div className="w-full mb-4.5 flex flex-col gap-7.5 lg:mb-6.5">
                     <div className="flex flex-col gap-3 lg:flex-1">
                       <label
-                        htmlFor="email"
+                        htmlFor="username"
                         className="text-base font-semibold text-black dark:text-white"
                       >
-                        Email
+                        Username
                       </label>
                       <input
                         required
                         type="text"
-                        placeholder="Email"
-                        name="email"
-                        value={data.email}
-                        onChange={(e) => setData({ ...data, email: e.target.value })}
+                        placeholder="Username"
+                        name="Username"
+                        value={data.username}
+                        onChange={(e) => setData({ ...data, username: e.target.value })}
                         className="w-full border-2 rounded-lg border-stroke bg-transparent p-3 focus:border-waterloo focus:placeholder:text-black focus-visible:outline-none dark:border-strokedark dark:focus:border-manatee dark:focus:placeholder:text-white" />
                     </div>
 

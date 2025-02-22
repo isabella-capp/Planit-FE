@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react";
 import TimeSelector, { type SelectedTimes } from "./TimeSelector";
 import DateSelector, { type SelectionMode } from "./DateSelector";
 import { Calendar, type SelectedDates } from "./Calendar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { generateDatesInRange } from "@/types/dateUtils";
 
 interface EventFormProps {
@@ -35,9 +35,15 @@ const EventForm = ({ navigator }: EventFormProps) => {
         setSelectedTimes(times)
     }
 
-    console.log(selectedDates)
-    console.log(selectedTimes)
-
+    useEffect(() => {
+        setSelectedDates({
+            specificDates: [],
+            range: {
+                start: null,
+                end: null,
+            },
+        });
+    }, [mode]);
 
     const handleCreateEvent = async () => {
         try {
@@ -57,7 +63,7 @@ const EventForm = ({ navigator }: EventFormProps) => {
 
             const datesJSON = JSON.stringify(dates);
 
-            const response = await fetch('http://localhost:5000/private/create_event', {
+            const response = await fetch('http://127.0.0.1:5000/private/create_event', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -66,14 +72,19 @@ const EventForm = ({ navigator }: EventFormProps) => {
                 body: JSON.stringify({ name, selectedTimes, datesJSON }),
             });
 
-            const result = await response.json();
-
             if (!response.ok) {
-                console.error("Error creating event:", result.message);
-                return;
+                throw new Error(`Error creating event: ${response.status}`);
             }
 
+            const result = await response.json();
+
+
+          
             const eventId = result.event_id;
+            if (!eventId) {
+                throw new Error("No event ID returned from server.");
+            }
+
             alert(`Evento creato con successo! ID evento: ${eventId}`);
             navigator(eventId); // Redirect to the event page
         } catch (error) {
@@ -88,7 +99,7 @@ const EventForm = ({ navigator }: EventFormProps) => {
                 New Event
             </h2>
 
-            <form>
+            <form onSubmit={(e) => e.preventDefault()}>
                 <div className="mb-7.5 flex flex-col gap-3 lg:flex-1">
                     <label className="font-medium text-black dark:text-white">Event Name</label>
                     <input

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Image from "next/image";
 import EventForm from "./EventForm";
 import { SendHorizontal } from "lucide-react";
@@ -12,8 +12,11 @@ const CreateEvent = () => {
   const router = useRouter();
   
   const navigateToEvent = (id: string): void => {
-    if(router)
-      router.push(`/event/${id}`);
+    if (!id) {
+      console.error("ID evento non valido!");
+      return;
+    }
+    router.push(`/event/${id}`);
   }
   
   return (

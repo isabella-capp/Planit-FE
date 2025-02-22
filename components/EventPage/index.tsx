@@ -1,20 +1,103 @@
 'use client'
 import Image from 'next/image';
 import TimeSlotsTable from './TimeSlotsTable';
-import { UsersRound } from 'lucide-react';
 import { useParams } from "next/navigation";
+import { use, useEffect, useState } from 'react';
 
-interface EventPageProps {
-    eventName: string;
-    userName: string;
-}
+interface Event {
+    name: string;
+    start_time: string;
+    end_time: string;
+    dates: string[]; // o puoi usare Date[] se vuoi usare oggetti Date
+    id: number;
+  }
 
-const EventPage: React.FC<EventPageProps> = ({ eventName, userName }) => {
-    const dates = ['2023-07-01', '2023-07-02', '2023-07-03', '2023-07-04', '2023-07-05'];
-    const startTime = '09:00';
-    const endTime = '17:00';
+const EventPage = () => {
     const params = useParams();
     const id = params.id;
+
+    const [eventData, setEventData] = useState<Event | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+   
+    const [username, setUsername] = useState('');
+    const[userId, setUserId] = useState('');
+
+    console.log(id);
+
+    useEffect(() => {
+        if (!id) return; // Aspetta che l'ID sia disponibile
+
+        const fetchEventData = async () => {
+            try {
+                const response = await fetch(`http://localhost:5000/private/event/${id}`, {
+                    method: "GET",
+                    credentials: "include",
+                });
+
+                if (!response.ok) {
+                    console.error("Errore durante il recupero dei dati dell'evento");
+                    setError("Errore durante il recupero dei dati dell'evento");
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (data && data.event) {
+                    const parsedData: Event = {
+                        ...data.event,
+                        dates: data.event.dates ? JSON.parse(data.event.dates) : [], // Parsing sicuro
+                    };
+
+                    console.log("Dati parsati:", parsedData);
+                    setEventData(parsedData);
+                } else {
+                    setError("Dati evento non disponibili.");
+                }
+            } catch (err) {
+                if (err instanceof Error) {
+                    setError(err.message);
+                } else {
+                    setError("Errore sconosciuto.");
+                }
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchEventData();
+    }, [id]);
+
+    useEffect(() => {
+        async function fetchUser() {
+            try {
+              const response = await fetch(`http://127.0.0.1:5000/api/user`, {
+                method: 'GET',
+                credentials: 'include',
+              });
+        
+              const result = await response.json();
+              if (response.ok) {
+                setUserId(result.id);
+                console.log(result);
+                console.log(result.data);
+                setUsername(result.username);
+              } else {
+                console.log('Not authorized:', result.message);
+              }
+        
+            } catch (error) {
+              console.error('Error fetching user:', error);
+            }
+          }
+          fetchUser();
+    }, [userId]);
+    
+
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error}</div>;
+
+    console.log('EventData:', eventData); // Controlla cosa c'è in eventData
 
     return (
         <section id="event" className="px-4 md:px-8 2xl:px-0">
@@ -39,22 +122,18 @@ const EventPage: React.FC<EventPageProps> = ({ eventName, userName }) => {
                 <div className="mt-5 mb-5 lg:mt-5 text-center">
                     <h1 className="mb-5 text-3xl text-center font-bold text-black dark:text-white xl:text-hero ">
                         <span className="relative inline-block before:absolute before:bottom-2.5 before:left-0 before:-z-1 before:h-3 before:w-full before:bg-titlebg dark:before:bg-titlebgdark ">
-                            {eventName}
+                            {eventData?.name}
                         </span>
                     </h1>
                     <h1 className="text-4xl mb-3 font-bold text-black dark:text-white"></h1>
-                    <h2 className="text-2xl mb-3 font-bold text-black dark:text-white">Welcome, {userName}!</h2>
+                    <h2 className="text-2xl mb-3 font-bold text-black dark:text-white">Welcome, {username}!</h2>
                     <p className="text-lg mb-8">Please select your availability from the time slots below.</p>
                 </div>
             </div>
 
-            <TimeSlotsTable dates={dates} startTime={startTime} endTime={endTime} />
-            <div className="flex justify-center items-center mt-8 mb-12">
-                <a href={`/event/availability/${id}`} className="flex items-center gap-2 mt-4 bg-primarygradient-600 hover:bg-primary-700 text-white font-semibold py-3 px-5 rounded-full shadow-md transition-transform duration-300 ease-in-out hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primarygradient-600 focus:ring-opacity-50">
-                    <UsersRound className="w-5 h-5" aria-hidden="true" />
-                    <span className="text-sm">View Group Availability</span>
-                </a>
-            </div>
+            {eventData && eventData.dates && eventData.start_time && eventData.end_time && (
+                <TimeSlotsTable dates={eventData.dates} startTime={eventData.start_time} endTime={eventData.end_time} userId={userId} />
+            )}
         </section>
     );
 };

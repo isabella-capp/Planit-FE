@@ -8,10 +8,12 @@ const Signup = () => {
   const [isHovered, setIsHovered] = useState(false)
   const [message, setMessage] = useState('');
   const [data, setData] = useState({
-    name: "",
+    username: "",
     email: "",
     password: "",
   });
+
+  console.log(data);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,7 +24,7 @@ const Signup = () => {
             'Content-Type': 'application/json',
           },
           credentials: 'include', // Importante per inviare i cookie di sessione
-          body: JSON.stringify({ data }),
+          body: JSON.stringify(data),
         });
 
         const result = await response.json();
@@ -31,7 +33,7 @@ const Signup = () => {
           console.error('Sign up failed: ', result.message);
         } else {
           console.log('Sign up successful');
-          window.location.href = '/signin'; // Redirect to sign in
+          window.location.href = '/auth/signin'; // Redirect to sign in
         }
     } catch (error) {
       setMessage('Error during sign up');
@@ -103,16 +105,14 @@ const Signup = () => {
                 <form onSubmit={handleSubmit}>
                   <div className="w-full mb-4.5 flex flex-col gap-7.5 lg:mb-6.5">
                     <div className="flex flex-col gap-3 lg:flex-1">
-                      <label htmlFor="fullName" className="text-black dark:text-white"> Full name </label>
+                      <label htmlFor="fullName" className="text-black dark:text-white"> Username </label>
                       <input
                         required
                         name="name"
                         type="text"
-                        placeholder="Full name"
-                        value={data.name}
-                        onChange={(e) =>
-                          setData({ ...data, [e.target.name]: e.target.value })
-                        }
+                        placeholder="Username"
+                        value={data.username}
+                        onChange={(e) => setData({ ...data, username: e.target.value })}
                         className="w-full border-2 rounded-lg border-stroke bg-transparent p-3 focus:border-waterloo focus:placeholder:text-black focus-visible:outline-none dark:border-strokedark dark:focus:border-manatee dark:focus:placeholder:text-white" />
                     </div>
                     <div className="flex flex-col gap-3 lg:flex-1">
@@ -123,9 +123,7 @@ const Signup = () => {
                         type="email"
                         placeholder="Email address"
                         value={data.email}
-                        onChange={(e) =>
-                          setData({ ...data, [e.target.name]: e.target.value })
-                        }
+                        onChange={(e) => setData({ ...data, email: e.target.value })}
                         className="w-full border-2 rounded-lg border-stroke bg-transparent p-3 focus:border-waterloo focus:placeholder:text-black focus-visible:outline-none dark:border-strokedark dark:focus:border-manatee dark:focus:placeholder:text-white" />
                     </div>
 
@@ -137,9 +135,7 @@ const Signup = () => {
                         type="password"
                         placeholder="Password"
                         value={data.password}
-                        onChange={(e) =>
-                          setData({ ...data, [e.target.name]: e.target.value })
-                        }
+                        onChange={(e) => setData({ ...data, password: e.target.value })}
                         className="w-full border-2 rounded-lg border-stroke bg-transparent p-3 focus:border-waterloo focus:placeholder:text-black focus-visible:outline-none dark:border-strokedark dark:focus:border-manatee dark:focus:placeholder:text-white" />
                     </div>
                   </div>

@@ -7,11 +7,13 @@ import { useEffect, useState } from "react";
 import ThemeToggler from "./ThemeToggler";
 import menuData from "./menuData";
 import IconUser from "./IconUser";
+import Logged from "./Logged";
 
 const Header = () => {
   const [navigationOpen, setNavigationOpen] = useState(false);
   const [stickyMenu, setStickyMenu] = useState(false);
-
+  const [userLogged, setUserLogged] = useState(false);
+  const [username, setUsername] = useState('');
   const pathUrl = usePathname();
 
   // Sticky menu
@@ -23,8 +25,31 @@ const Header = () => {
     }
   };
 
+  async function fetchUser() {
+    try {
+      const response = await fetch(`http://127.0.0.1:5000/api/user`, {
+        method: 'GET',
+        credentials: 'include',
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        setUserLogged(true);
+        console.log(result);
+        console.log(result.data);
+        setUsername(result.username);
+      } else {
+        console.log('Not authorized:', result.message);
+      }
+
+    } catch (error) {
+      console.error('Error fetching user:', error);
+    }
+  }
+
   useEffect(() => {
     window.addEventListener("scroll", handleStickyMenu);
+    fetchUser();
   });
 
   return (
@@ -95,7 +120,7 @@ const Header = () => {
             "navbar !visible mt-4 h-auto max-h-[400px] rounded-md bg-white p-7.5 shadow-solid-5 dark:bg-blacksection xl:h-auto xl:p-0 xl:shadow-none xl:dark:bg-transparent"
             }`}
         >
-          <nav className="flex-[8]">
+          <nav className="flex-[7]">
             <ul className="flex flex-col justify-center font-bold gap-5 xl:flex-row xl:items-center xl:gap-10">
               {menuData.map((menuItem, key) => (
                 <li key={key}>
@@ -115,15 +140,19 @@ const Header = () => {
           </nav>
 
 
-          <div className="mt-7 flex flex-[2] justify-end items-center gap-6 xl:mt-0">
-            <ThemeToggler />
+          <div className="mt-7 flex flex-[3] justify-end items-center gap-6 xl:mt-0">
+            {userLogged ? <Logged username={username}></Logged> : 
+              <div>
+                <Link
+                  href="/auth/signin"
+                  className="flex items-center justify-center font-extrabold p-2.5 text-regular dark:text-gray-3"
+                >
+                  <IconUser />
+                </Link>
+              </div>
+            }
 
-            <Link
-              href="/auth/signin"
-              className="flex items-center justify-center font-extrabold p-2.5 text-regular dark:text-gray-3"
-            >
-              <IconUser />
-            </Link>
+            <ThemeToggler />
           </div>
         </div>
       </div>
