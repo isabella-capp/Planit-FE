@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 const Availability = () => {
     return (
         <main className="flex min-h-screen flex-col items-center justify-between p-24">
-           <GroupAvailabilityPage eventName="Team Meeting" />
+           <GroupAvailabilityPage />
         </main>
     );
 };
