@@ -2,15 +2,19 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { redirect, useRouter } from "next/navigation";
 import { useState } from "react";
 
 const Signin = () => {
+  const params = new URLSearchParams(window.location.search);
+  const redirectUrl = params.get("redirect");
   const [data, setData] = useState({
     username: "",
     password: "",
   });
   const [isHovered, setIsHovered] = useState(false)
   const [message, setMessage] = useState('');
+  const router = useRouter();
 
   console.log(data);
 
@@ -33,7 +37,13 @@ const Signin = () => {
         console.error('Sign in failed:', result.message);
       } else {
         console.log('Sign in successful', result);
-        window.location.href = '/newevent'; // Redirect to home
+        
+        if (redirectUrl) {
+            router.push(redirectUrl);
+        } else {
+            router.push("/newevent"); // Redirect di default
+        }
+       
       }
       
     } catch (error) {

@@ -1,7 +1,7 @@
 'use client'
 import Image from 'next/image';
 import TimeSlotsTable from './TimeSlotsTable';
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { use, useEffect, useState } from 'react';
 
 interface Event {
@@ -15,7 +15,7 @@ interface Event {
 const EventPage = () => {
     const params = useParams();
     const id = params.id;
-
+    const router = useRouter();
     const [eventData, setEventData] = useState<Event | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -26,6 +26,33 @@ const EventPage = () => {
     console.log(id);
 
     useEffect(() => {
+        async function fetchUser() {
+            try {
+              const response = await fetch(`http://127.0.0.1:5000/api/user`, {
+                method: 'GET',
+                credentials: 'include',
+              });
+        
+              const result = await response.json();
+              if (response.ok) {
+                setUserId(result.id);
+                console.log(result);
+                console.log(result.data);
+                setUsername(result.username);
+              } else {
+                console.log('Not authorized:', result.message);
+                router.push(`/auth/signin?redirect=/event/${id}`);
+              }
+        
+            } catch (error) {
+              console.error('Error fetching user:', error);
+            }
+          }
+          fetchUser();
+    }, [userId]);
+    
+
+    useEffect(() => {
         if (!id) return; // Aspetta che l'ID sia disponibile
 
         const fetchEventData = async () => {
@@ -34,6 +61,12 @@ const EventPage = () => {
                     method: "GET",
                     credentials: "include",
                 });
+
+                if (response.status === 404) {
+                    console.log("Evento non trovato, reindirizzamento a /error");
+                    router.push("/error");
+                    return;
+                }
 
                 if (!response.ok) {
                     console.error("Errore durante il recupero dei dati dell'evento");
@@ -68,30 +101,6 @@ const EventPage = () => {
         fetchEventData();
     }, [id]);
 
-    useEffect(() => {
-        async function fetchUser() {
-            try {
-              const response = await fetch(`http://127.0.0.1:5000/api/user`, {
-                method: 'GET',
-                credentials: 'include',
-              });
-        
-              const result = await response.json();
-              if (response.ok) {
-                setUserId(result.id);
-                console.log(result);
-                console.log(result.data);
-                setUsername(result.username);
-              } else {
-                console.log('Not authorized:', result.message);
-              }
-        
-            } catch (error) {
-              console.error('Error fetching user:', error);
-            }
-          }
-          fetchUser();
-    }, [userId]);
     
 
     if (loading) return <div>Loading...</div>;

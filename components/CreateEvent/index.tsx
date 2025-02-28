@@ -1,15 +1,26 @@
 "use client";
 
 import { motion } from "framer-motion";
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import EventForm from "./EventForm";
 import { SendHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useSession } from "@/types/useSession";
 
 
 const CreateEvent = () => {
   const router = useRouter();
+  const { user, loading } = useSession();
+
+  useEffect(() => {
+      if (!loading && !user) {
+          router.push('/error');
+      }
+  }, [user, loading, router]);
+
+  if (loading) return <p>Loading...</p>;
+  if (!user) return null;
   
   const navigateToEvent = (id: string): void => {
     if (!id) {
