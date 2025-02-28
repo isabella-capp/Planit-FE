@@ -17,11 +17,12 @@ const TimeSlotsTable: FC<TimeSlotsTableProps> = ({ dates, startTime, endTime, us
   const params = useParams();
   const id = params.id;
   const col = dates.length + 1;
+  const [selectedSlots, setSelectedSlots] = useState<Array<{ date: string; start_time: string; end_time: string }>>([]);
 
   const generateTimeSlots = (startTime: string, endTime: string) => {
     const startHour = parseInt(startTime.split(":" )[0]);
     const endHour = parseInt(endTime.split(":" )[0]);
-    return Array.from({ length: (endHour - startHour) * 2 }, (_, i) => {
+    return Array.from({ length: (endHour - startHour) * 2 + 1 }, (_, i) => {
       const hour = startHour + Math.floor(i / 2);
       const minutes = i % 2 === 0 ? "00" : "30";
       return `${hour}:${minutes}`;
@@ -29,7 +30,6 @@ const TimeSlotsTable: FC<TimeSlotsTableProps> = ({ dates, startTime, endTime, us
   };
 
   const timeSlots = generateTimeSlots(startTime, endTime);
-  const [selectedSlots, setSelectedSlots] = useState<Array<{ date: string; start_time: string; end_time: string }>>([]);
 
   const handleClickedCells = (rowIndex: number, colIndex: number) => {
     const date = dates[colIndex];
@@ -37,7 +37,6 @@ const TimeSlotsTable: FC<TimeSlotsTableProps> = ({ dates, startTime, endTime, us
     const end_time = timeSlots[rowIndex + 1] || `${parseInt(start_time.split(":" )[0]) + 1}:00`;
 
     const slot = { date, start_time, end_time };
-
 
     setSelectedSlots(prevSlots => {
       const exists = prevSlots.some(s => JSON.stringify(s) === JSON.stringify(slot));

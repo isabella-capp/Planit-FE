@@ -41,5 +41,5 @@
     } else if (selectedDates.range && selectedDates.range.start && selectedDates.range.end) {
         return generateDatesInRange(selectedDates.range.start, selectedDates.range.end);
     }
-    return [];
+    return []; 
 }

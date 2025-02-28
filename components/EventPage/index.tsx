@@ -3,6 +3,7 @@ import Image from 'next/image';
 import TimeSlotsTable from './TimeSlotsTable';
 import { useParams, useRouter } from "next/navigation";
 import { use, useEffect, useState } from 'react';
+import { useSession } from '@/types/useSession';
 
 interface Event {
     name: string;
@@ -16,41 +17,18 @@ const EventPage = () => {
     const params = useParams();
     const id = params.id;
     const router = useRouter();
+    const { user, userId, loading } = useSession();
+
     const [eventData, setEventData] = useState<Event | null>(null);
-    const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
    
-    const [username, setUsername] = useState('');
-    const[userId, setUserId] = useState('');
-
-    console.log(id);
-
     useEffect(() => {
-        async function fetchUser() {
-            try {
-              const response = await fetch(`http://127.0.0.1:5000/api/user`, {
-                method: 'GET',
-                credentials: 'include',
-              });
-        
-              const result = await response.json();
-              if (response.ok) {
-                setUserId(result.id);
-                console.log(result);
-                console.log(result.data);
-                setUsername(result.username);
-              } else {
-                console.log('Not authorized:', result.message);
-                router.push(`/auth/signin?redirect=/event/${id}`);
-              }
-        
-            } catch (error) {
-              console.error('Error fetching user:', error);
-            }
-          }
-          fetchUser();
-    }, [userId]);
-    
+        if (loading) return;
+
+        if (!user) {
+            router.push(`/auth/signin?redirect=/event/${id}`);
+        }
+    }, [user, loading, id, router]);
 
     useEffect(() => {
         if (!id) return; // Aspetta che l'ID sia disponibile
@@ -93,9 +71,7 @@ const EventPage = () => {
                 } else {
                     setError("Errore sconosciuto.");
                 }
-            } finally {
-                setLoading(false);
-            }
+            } 
         };
 
         fetchEventData();
@@ -135,7 +111,7 @@ const EventPage = () => {
                         </span>
                     </h1>
                     <h1 className="text-4xl mb-3 font-bold text-black dark:text-white"></h1>
-                    <h2 className="text-2xl mb-3 font-bold text-black dark:text-white">Welcome, {username}!</h2>
+                    <h2 className="text-2xl mb-3 font-bold text-black dark:text-white">Welcome, {user}!</h2>
                     <p className="text-lg mb-8">Please select your availability from the time slots below.</p>
                 </div>
             </div>

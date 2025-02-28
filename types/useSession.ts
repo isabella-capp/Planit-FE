@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 
 export function useSession() {
-    const [user, setUser] = useState<string | null>(null);
+    const [user, setUser] = useState('');
+    const [userId, setUserId] = useState('');
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -10,16 +11,16 @@ export function useSession() {
             .then(data => {
                 if (data.status === 'authenticated') {
                     setUser(data.user);
+                    setUserId(data.id);
                 } else {
-                    setUser(null);
+                    console.log('Unauthenticated user');
                 }
                 setLoading(false);
             })
             .catch(() => {
-                setUser(null);
                 setLoading(false);
             });
     }, []);
 
-    return { user, loading };
+    return { user, userId, loading };
 }

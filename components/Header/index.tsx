@@ -8,13 +8,24 @@ import ThemeToggler from "./ThemeToggler";
 import menuData from "./menuData";
 import IconUser from "./IconUser";
 import Logged from "./Logged";
+import { useSession } from "@/types/useSession";
 
 const Header = () => {
   const [navigationOpen, setNavigationOpen] = useState(false);
   const [stickyMenu, setStickyMenu] = useState(false);
   const [userLogged, setUserLogged] = useState(false);
-  const [username, setUsername] = useState('');
   const pathUrl = usePathname();
+  const { user } = useSession();
+
+  useEffect(() => {
+    if (user) {
+      setUserLogged(true);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleStickyMenu);
+  });
 
   // Sticky menu
   const handleStickyMenu = () => {
@@ -24,33 +35,6 @@ const Header = () => {
       setStickyMenu(false);
     }
   };
-
-  async function fetchUser() {
-    try {
-      const response = await fetch(`http://127.0.0.1:5000/api/user`, {
-        method: 'GET',
-        credentials: 'include',
-      });
-
-      const result = await response.json();
-      if (response.ok) {
-        setUserLogged(true);
-        console.log(result);
-        console.log(result.data);
-        setUsername(result.username);
-      } else {
-        console.log('Not authorized:', result.message);
-      }
-
-    } catch (error) {
-      console.error('Error fetching user:', error);
-    }
-  }
-
-  useEffect(() => {
-    window.addEventListener("scroll", handleStickyMenu);
-    fetchUser();
-  });
 
   return (
     <header
@@ -141,7 +125,7 @@ const Header = () => {
 
 
           <div className="mt-7 flex flex-[3] justify-end items-center gap-6 xl:mt-0">
-            {userLogged ? <Logged username={username}></Logged> : 
+            {userLogged ? <Logged username={user}></Logged> : 
               <div>
                 <Link
                   href="/auth/signin"
