@@ -24,7 +24,7 @@ const CreateEvent = () => {
   
   const navigateToEvent = (id: string): void => {
     if (!id) {
-      console.error("ID evento non valido!");
+      router.push('/error');
       return;
     }
     router.push(`/event/${id}`);
