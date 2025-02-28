@@ -27,6 +27,12 @@ const GroupAvailabilityTable: React.FC<GroupAvailabilityTableProps> = ({ dates, 
     return groupData[date]?.[time] || [];
   };
 
+  const stringAvailableUsers = (date: string, time: string) => {
+    const users = getAvailableUsers(date, time);
+    return users.join(', '); // Join the names with a comma and space
+  };
+  
+
   const maxAvailability = Object.values(groupData).reduce((max, dayData) => {
     const dailyMax = Object.values(dayData).reduce((dayMax, timeUsers) => Math.max(dayMax, timeUsers.length), 0);
     return Math.max(max, dailyMax);
@@ -41,6 +47,7 @@ const GroupAvailabilityTable: React.FC<GroupAvailabilityTableProps> = ({ dates, 
 
 
   const handleCellClick = (date: string, time: string) => {
+    console.log('Cell clicked:', date, time);
     setPopupInfo({ date, time });
   };
 
@@ -92,7 +99,7 @@ const GroupAvailabilityTable: React.FC<GroupAvailabilityTableProps> = ({ dates, 
                     <div
                       style={{ backgroundColor: getCellColor(date, `${time.substring(0, 2)}:30`) }}
                       className="relative w-full h-6 sm:h-7 md:h-8 border border-gray-300 dark:border-gray-600 rounded-md transition-colors cursor-pointer"
-                      onClick={() => handleCellClick(date, `${time.substring(0, 2)}30`)}
+                      onClick={() => handleCellClick(date, `${time.substring(0, 2)}:30`)}
                     />
                   </div>
                 ))}
@@ -123,7 +130,7 @@ const GroupAvailabilityTable: React.FC<GroupAvailabilityTableProps> = ({ dates, 
                 </p>
               </div>
               <p className="text-sm mb-2 text-gray-800 dark:text-gray-200 mt-2">
-                {getAvailableUsers(popupInfo.date, popupInfo.time).join(', ') || 'No one available'}
+                {stringAvailableUsers(popupInfo.date, popupInfo.time) || 'No one available'}
               </p>
               <div className="flex justify-end">
                 <button
