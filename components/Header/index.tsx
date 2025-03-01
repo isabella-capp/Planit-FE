@@ -8,25 +8,38 @@ import ThemeToggler from "./ThemeToggler";
 import menuData from "./menuData";
 import IconUser from "./IconUser";
 import Logged from "./Logged";
-import { useSession } from "@/types/useSession";
 
 const Header = () => {
   const [navigationOpen, setNavigationOpen] = useState(false);
   const [stickyMenu, setStickyMenu] = useState(false);
   const [userLogged, setUserLogged] = useState(false);
+  const [username, setUsername] = useState('');
   const pathUrl = usePathname();
-  const { user } = useSession();
+ 
 
-  useEffect(() => {
-    if (!user) return;
+  async function fetchUser() {
+    try {
+      const response = await fetch(`http://127.0.0.1:5000/api/check-session`, {
+        method: 'GET',
+        credentials: 'include',
+      });
 
-    if (user) {
-      setUserLogged(true);
+      const result = await response.json();
+      if (response.ok) {
+        setUserLogged(true);
+        setUsername(result.user);
+      } else {
+        console.log('Not authorized:', result.message);
+      }
+
+    } catch (error) {
+      console.error('Error fetching user:', error);
     }
-  }, [user]);
+  }
 
   useEffect(() => {
     window.addEventListener("scroll", handleStickyMenu);
+    fetchUser();
   });
 
   // Sticky menu
@@ -154,7 +167,7 @@ const Header = () => {
           </nav>
 
           <div className="mt-7 flex flex-[3] justify-end items-center gap-6 xl:mt-0">
-            {userLogged ? <Logged username={user}></Logged> :
+            {userLogged ? <Logged username={username}></Logged> :
               <div>
                 <Link
                   href="/auth/signin"
