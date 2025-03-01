@@ -18,6 +18,8 @@ const Header = () => {
   const { user } = useSession();
 
   useEffect(() => {
+    if (!user) return;
+
     if (user) {
       setUserLogged(true);
     }
@@ -39,8 +41,8 @@ const Header = () => {
   return (
     <header
       className={`fixed left-0 top-0 z-99999 w-full py-7 ${stickyMenu
-          ? "bg-white !py-4 shadow transition duration-100 dark:bg-black"
-          : ""
+        ? "bg-white !py-4 shadow transition duration-100 dark:bg-black"
+        : ""
         }`}
     >
       <div className="relative mx-auto max-w-c-1390 items-center justify-between px-4 md:px-8 xl:flex 2xl:px-0">
@@ -107,25 +109,52 @@ const Header = () => {
           <nav className="flex-[7]">
             <ul className="flex flex-col justify-center font-bold gap-5 xl:flex-row xl:items-center xl:gap-10">
               {menuData.map((menuItem, key) => (
-                <li key={key}>
-                    <Link
-                    href={`${menuItem.path}`}
-                    className={
-                      pathUrl === menuItem.path
-                      ? "text-primary hover:text-primary border-b-2 border-primary"
-                      : "hover:text-primary"
-                    }
-                    >
-                    {menuItem.title}
-                    </Link>
-                </li>
+              <li key={key}>
+                <Link
+                href={`${menuItem.path}`}
+                className={
+                  pathUrl === menuItem.path
+                  ? "text-primary hover:text-primary border-b-2 border-primary"
+                  : "hover:text-primary"
+                }
+                >
+                {menuItem.title}
+                </Link>
+              </li>
               ))}
+              {userLogged && (
+              <>
+                <li>
+                <Link
+                  href="/newevent"
+                  className={
+                  pathUrl === "/newevent"
+                    ? "text-primary hover:text-primary border-b-2 border-primary"
+                    : "hover:text-primary"
+                  }
+                >
+                  Create Event
+                </Link>
+                </li>
+                <li>
+                <Link
+                  href="/myevents"
+                  className={
+                  pathUrl === "/myevents"
+                    ? "text-primary hover:text-primary border-b-2 border-primary"
+                    : "hover:text-primary"
+                  }
+                >
+                  My Events
+                </Link>
+                </li>
+              </>
+              )}
             </ul>
           </nav>
 
-
           <div className="mt-7 flex flex-[3] justify-end items-center gap-6 xl:mt-0">
-            {userLogged ? <Logged username={user}></Logged> : 
+            {userLogged ? <Logged username={user}></Logged> :
               <div>
                 <Link
                   href="/auth/signin"

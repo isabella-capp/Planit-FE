@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import GroupAvailabilityTable from './GroupAvailabilityTable';
 import { UserRound } from 'lucide-react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 
 interface Event {
   name: string;
@@ -17,8 +17,8 @@ interface Event {
 const GroupAvailabilityPage = () => {
   const [eventData, setEventData] = useState<Event | null>(null);
   const [groupData, setGroupData] = useState<{ [key: string]: { [key: string]: string[] } }>({});
-  const [error, setError] = useState<string | null>(null);
 
+  const router = useRouter();
   const param = useParams();
   const id = param.id;
 
@@ -31,6 +31,12 @@ const GroupAvailabilityPage = () => {
           method: "GET",
           credentials: "include",
         });
+
+        if (response.status === 404) {
+          console.log("Evento non trovato, reindirizzamento a /error");
+          router.push("/error");
+          return;
+        }
 
         if (!response.ok) {
           console.error("Errore durante il recupero dei dati dell'evento");

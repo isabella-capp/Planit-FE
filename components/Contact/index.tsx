@@ -16,7 +16,7 @@ const Contact = () => {
   return (
     <>
       {/* <!-- ===== Contact Start ===== --> */}
-      <section id="support" className="px-4 md:px-8 2xl:px-0">
+      <section id="support" className="px-4 md:px-8 xl:px-10">
         <div className="relative mx-auto max-w-c-1390 px-7.5 pt-10 lg:px-15 lg:pt-15 xl:px-20 xl:pt-20 lg:flex-row">
         <div className="mt-10 mb-10 lg:mt-0">
           <h2 className="text-sectiontitle4 mb-3 font-bold text-black dark:text-white">Contact Us</h2>

@@ -16,10 +16,11 @@ const TimeSelector = ({onTimeSelect}: TimeProps) => {
         endTime: '20:00',
     })
 
-    const timeSlots = Array.from({ length: 24 }, (_, i) => {
-        const hour = i + 1;
-        return `${hour}:00`
-    });
+    const timeSlots = Array.from({ length: 24 * 2 }, (_, i) => {
+        const hour = Math.floor(i / 2) + 1; 
+        const minutes = i % 2 === 0 ? "00" : "30"; 
+        return `${hour}:${minutes}`;
+      });
 
     useEffect(() => {
         onTimeSelect(selectedTimes)

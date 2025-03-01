@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react';
-import { generateTimeSlots, formatDate } from '@/types/dateUtils';
+import { generateTimeSlotsGroup, formatDate } from '@/types/dateUtils';
 import { CalendarDays, Clock, UserCheck } from 'lucide-react';
 import getNextColor from '@/types/colorUtils';
 import Legend from './Legend';
@@ -20,7 +20,7 @@ interface GroupAvailabilityTableProps {
 
 const GroupAvailabilityTable: React.FC<GroupAvailabilityTableProps> = ({ dates, startTime, endTime, groupData }) => {
   const [popupInfo, setPopupInfo] = useState<{ date: string; time: string } | null>(null);
-  const timeSlots = generateTimeSlots(startTime, endTime);
+  const timeSlots = generateTimeSlotsGroup(startTime, endTime);
   const tableRef = useRef<HTMLDivElement>(null);
 
   const getAvailableUsers = (date: string, time: string) => {

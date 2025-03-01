@@ -1,4 +1,4 @@
-  export function generateTimeSlots(startTime: string, endTime: string): string[] {
+  export function generateTimeSlotsGroup(startTime: string, endTime: string): string[] {
     const startHour = parseInt(startTime.split(":")[0]);
     const endHour = parseInt(endTime.split(":")[0]);
     return Array.from({ length: endHour - startHour + 1 }, (_, i) => {
@@ -6,6 +6,24 @@
       return `${hour}:00`;
     });
   }
+
+  export function generateTimeSlots(startTime: string, endTime: string): string[] {
+    const [startHour, startMinute] = startTime.split(":").map(Number);
+    const [endHour, endMinute] = endTime.split(":").map(Number);
+  
+    // Calcola il numero di intervalli da 30 minuti
+    const startTotalMinutes = startHour * 60 + startMinute;
+    const endTotalMinutes = endHour * 60 + endMinute;
+  
+    const totalSlots = Math.floor((endTotalMinutes - startTotalMinutes) / 30) + 1;
+  
+    return Array.from({ length: totalSlots }, (_, i) => {
+      const currentMinutes = startTotalMinutes + i * 30;
+      const hour = Math.floor(currentMinutes / 60);
+      const minutes = currentMinutes % 60;
+      return `${hour}:${minutes === 0 ? "00" : minutes}`;
+    });
+  };
 
   
   export function formatDate(date: string): { weekday: string; day: string } {
