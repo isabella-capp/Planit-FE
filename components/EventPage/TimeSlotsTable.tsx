@@ -5,6 +5,7 @@ import Legend from "./legend";
 import { formatDate, generateTimeSlots } from "@/types/dateUtils";
 import { useParams } from "next/navigation";
 import { Save, UsersRound } from "lucide-react";
+import { log } from "console";
 
 interface TimeSlotsTableProps {
   dates: string[];
@@ -24,16 +25,28 @@ const TimeSlotsTable: FC<TimeSlotsTableProps> = ({ dates, startTime, endTime, us
   const handleClickedCells = (rowIndex: number, colIndex: number) => {
     const date = dates[colIndex];
     const start_time = timeSlots[rowIndex];
-    const end_time = timeSlots[rowIndex + 1] || `${parseInt(start_time.split(":" )[0]) + 1}:00`;
-    
+    const end_time = timeSlots[rowIndex + 1] || `${parseInt(start_time.split(":")[0]) + 1}:00`;
+  
     const slot = { date, start_time, end_time };
-
-    setSelectedSlots(prevSlots => {
-      const exists = prevSlots.some(s => JSON.stringify(s) === JSON.stringify(slot));
-      return exists ? prevSlots.filter(s => JSON.stringify(s) !== JSON.stringify(slot)) : [...prevSlots, slot];
-    });
+  
+    console.log("Slot:", slot);
+  
+    // Check if the slot is already selected
+    const index = selectedSlots.findIndex((selectedSlot) => 
+      selectedSlot.date === date && selectedSlot.start_time === start_time
+    );
+  
+    if (index !== -1) {
+      // Remove the selected slot if it's already in the array
+      const newSelectedSlots = [...selectedSlots];
+      newSelectedSlots.splice(index, 1);
+      setSelectedSlots(newSelectedSlots);
+    } else {
+      // Add the new slot if it's not in the array
+      setSelectedSlots([...selectedSlots, slot]);
+    }
   };
-
+  
   const saveAvailability = async () => {
     try {
       const response = await fetch("http://127.0.0.1:5000/api/availability", {
@@ -43,10 +56,12 @@ const TimeSlotsTable: FC<TimeSlotsTableProps> = ({ dates, startTime, endTime, us
       });
 
       if (response.ok) {
-        fetchAvailability();
+        alert("Disponibilità salvata con successo!");
         console.log("Disponibilità salvata con successo!");
       } else {
+        alert("Errore nel salvataggio");
         console.error("Errore nel salvataggio");
+        fetchAvailability();
       }
     } catch (error) {
       console.error("Errore:", error);

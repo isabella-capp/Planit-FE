@@ -23,8 +23,8 @@ const Logged: FC<LoggedHeaderProps> = ({ username }) => {
 
   return <>
     <div className="flex flex-row gap-6 items-center">
-        <h3 className="font-bold"> Hello {username}!</h3>
-        <button onClick={handleLogout}>
+        <h3 className="font-bold text-center"> Hello {username}!</h3>
+        <button onClick={handleLogout} aria-label="Logout" className="hover:text-primary transition-colors">
             <LogOut className="h-[24px] w-[24px]"></LogOut>
         </button>
     </div>

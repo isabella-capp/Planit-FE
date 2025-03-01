@@ -125,7 +125,7 @@ const Footer = () => {
             viewport={{ once: true }}
             className="animate_top text-center flex-[6]"
           >
-            <p>&copy; {new Date().getFullYear()} PlanIt. All rights reserved</p>
+            <p>&copy; {new Date().getFullYear()} PlanIt. Created by Isabella Cappellino</p>
           </motion.div>
 
           <motion.div

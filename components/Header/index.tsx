@@ -38,9 +38,13 @@ const Header = () => {
   }
 
   useEffect(() => {
-    window.addEventListener("scroll", handleStickyMenu);
-    fetchUser();
-  });
+    window.addEventListener("scroll", handleStickyMenu)
+    fetchUser()
+
+    return () => {
+      window.removeEventListener("scroll", handleStickyMenu)
+    }
+  }, []) 
 
   // Sticky menu
   const handleStickyMenu = () => {
@@ -50,6 +54,12 @@ const Header = () => {
       setStickyMenu(false);
     }
   };
+
+  const handleLinkClick = () => {
+    if (navigationOpen) {
+      setNavigationOpen(false)
+    }
+  }
 
   return (
     <header
@@ -115,9 +125,11 @@ const Header = () => {
 
         {/* Nav Menu Start */}
         <div
-          className={`flex invisible h-0 w-full items-center justify-between xl:visible xl:flex xl:h-auto xl:w-full ${navigationOpen &&
-            "navbar !visible mt-4 h-auto max-h-[400px] rounded-md bg-white p-7.5 shadow-solid-5 dark:bg-blacksection xl:h-auto xl:p-0 xl:shadow-none xl:dark:bg-transparent"
-            }`}
+          className={`${
+            navigationOpen
+              ? "navbar !visible mt-4 h-auto max-h-[80vh] overflow-y-auto rounded-md bg-white p-7.5 shadow-solid-5 dark:bg-blacksection"
+              : "invisible h-0"
+          } w-full xl:visible xl:flex xl:h-auto xl:w-full xl:p-0 xl:shadow-none xl:dark:bg-transparent`}
         >
           <nav className="flex-[7]">
             <ul className="flex flex-col justify-center font-bold gap-5 xl:flex-row xl:items-center xl:gap-10">
@@ -130,6 +142,7 @@ const Header = () => {
                   ? "text-primary hover:text-primary border-b-2 border-primary"
                   : "hover:text-primary"
                 }
+                onClick={handleLinkClick}
                 >
                 {menuItem.title}
                 </Link>
@@ -145,6 +158,7 @@ const Header = () => {
                     ? "text-primary hover:text-primary border-b-2 border-primary"
                     : "hover:text-primary"
                   }
+                  onClick={handleLinkClick}
                 >
                   Create Event
                 </Link>
@@ -157,6 +171,7 @@ const Header = () => {
                     ? "text-primary hover:text-primary border-b-2 border-primary"
                     : "hover:text-primary"
                   }
+                  onClick={handleLinkClick}
                 >
                   My Events
                 </Link>
@@ -166,18 +181,20 @@ const Header = () => {
             </ul>
           </nav>
 
-          <div className="mt-7 flex flex-[3] justify-end items-center gap-6 xl:mt-0">
-            {userLogged ? <Logged username={username}></Logged> :
-              <div>
-                <Link
-                  href="/auth/signin"
-                  className="flex items-center justify-center font-extrabold p-2.5 text-regular dark:text-gray-3"
-                >
-                  <IconUser />
-                </Link>
-              </div>
-            }
-
+          <div className="mt-7 flex items-center justify-center xl:justify-end xl:mt-0 flex-[3] gap-4 xl:gap-6">
+            {userLogged ? (
+              <Logged username={username} />
+            ) : (
+              <Link
+                href="/auth/signin"
+                className="flex items-center justify-center font-extrabold p-2.5 text-regular dark:text-gray-3 hover:text-primary transition-colors"
+                onClick={handleLinkClick}
+              >
+                <IconUser />
+                <span className="ml-2 xl:hidden">Sign In</span>
+              </Link>
+            )}
+            
             <ThemeToggler />
           </div>
         </div>

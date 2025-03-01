@@ -41,7 +41,7 @@ const Signin = () => {
         if (redirectUrl) {
             router.push(redirectUrl);
         } else {
-            router.push("/newevent"); // Redirect di default
+          window.location.href = "/newevent"; // Redirect di default
         }
        
       }
