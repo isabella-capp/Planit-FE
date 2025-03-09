@@ -26,7 +26,7 @@ const Footer = () => {
                 {["Home", "About"].map((item) => (
                   <li key={item}>
                     <a
-                      href={item === "Home" ? "/" : `/#${item.toLowerCase()}`}
+                      href={item === "Home" ? "/" : `/${item.toLowerCase()}`}
                       className="inline-block hover:text-primary"
                     >
                       {item}
@@ -54,7 +54,7 @@ const Footer = () => {
                 {["Support", "FAQ"].map((item) => (
                   <li key={item}>
                     <a
-                      href={`${item == "FAQ" ? "/FAQ" : `/item.toLowerCase()`}`}
+                      href={`${item == "FAQ" ? "/FAQ" : `/${item.toLowerCase()}`}`}
                       className="inline-block hover:text-primary"
                     >
                       {item}

@@ -1,11 +1,5 @@
+import HomePage from "@/components/Home";
 import { Metadata } from "next";
-import Hero from "@/components/Hero";
-import Separator from "@/components/Separator";
-import Feature from "@/components/Features";
-import About from "@/components/About";
-import CTA from "@/components/CTA";
-import FAQ from "@/components/FAQ";
-import Newsletter from "@/components/Newsletter";
 
 export const metadata: Metadata = {
   title: "Next.js",
@@ -14,15 +8,10 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
+
   return (
     <main>
-      <Hero />
-      <Separator />
-      <Feature />
-      <About />
-      <CTA />
-      <FAQ />
-      <Newsletter />
+      <HomePage />      
     </main>
   );
 }

@@ -6,16 +6,28 @@ import { useEffect, useState } from "react";
 
 import ThemeToggler from "./ThemeToggler";
 import menuData from "./menuData";
+import menuDataLogged from "./menuDataLogged"
 import IconUser from "./IconUser";
 import Logged from "./Logged";
+import { Menu } from "@/types/menu";
+
 
 const Header = () => {
   const [navigationOpen, setNavigationOpen] = useState(false);
   const [stickyMenu, setStickyMenu] = useState(false);
   const [userLogged, setUserLogged] = useState(false);
   const [username, setUsername] = useState('');
+  const [menu, setMenu] = useState<Menu[]>([])
   const pathUrl = usePathname();
- 
+  
+  useEffect(() => {
+    if (userLogged) {
+      setMenu(menuDataLogged);
+    } else {
+      setMenu(menuData);
+    }
+  }, [userLogged]);
+
 
   async function fetchUser() {
     try {
@@ -133,7 +145,7 @@ const Header = () => {
         >
           <nav className="flex-[7]">
             <ul className="flex flex-col justify-center font-bold gap-5 xl:flex-row xl:items-center xl:gap-10">
-              {menuData.map((menuItem, key) => (
+              {menu.map((menuItem, key) => (
               <li key={key}>
                 <Link
                 href={`${menuItem.path}`}
@@ -148,36 +160,6 @@ const Header = () => {
                 </Link>
               </li>
               ))}
-              {userLogged && (
-              <>
-                <li>
-                <Link
-                  href="/newevent"
-                  className={
-                  pathUrl === "/newevent"
-                    ? "text-primary hover:text-primary border-b-2 border-primary"
-                    : "hover:text-primary"
-                  }
-                  onClick={handleLinkClick}
-                >
-                  Create Event
-                </Link>
-                </li>
-                <li>
-                <Link
-                  href="/myevents"
-                  className={
-                  pathUrl === "/myevents"
-                    ? "text-primary hover:text-primary border-b-2 border-primary"
-                    : "hover:text-primary"
-                  }
-                  onClick={handleLinkClick}
-                >
-                  My Events
-                </Link>
-                </li>
-              </>
-              )}
             </ul>
           </nav>
 
