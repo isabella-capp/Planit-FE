@@ -21,7 +21,7 @@ const Signin = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-        const response = await fetch(`http://127.0.0.1:5000/api/signin`, {
+      const response = await fetch(`http://127.0.0.1:5000/api/signin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -29,23 +29,24 @@ const Signin = () => {
         credentials: 'include', // Importante per inviare i cookie di sessione
         body: JSON.stringify(data),
       });
-    
+
       const result = await response.json();
       console.log(result); // Debug
-      
+
       if (!response.ok) {
-        console.error('Sign in failed:', result.message);
+        console.log('Sign in failed:', result.message);
+        setMessage(result.message);
       } else {
         console.log('Sign in successful', result);
-        
+
         if (redirectUrl) {
-            router.push(redirectUrl);
+          router.push(redirectUrl);
         } else {
-          window.location.href = "/newevent"; // Redirect di default
+          window.location.href = "/"; // Redirect di default
         }
-       
+
       }
-      
+
     } catch (error) {
       setMessage(`Error during login`);
     }
@@ -110,17 +111,17 @@ const Signin = () => {
               >
                 <div className="flex h-full w-full items-center justify-center flex-col">
                   <h1 className="text-center mb-5 text-3xl font-semibold text-black dark:text-white xl:text-sectiontitle4">
-                  Don't have an account?
+                    Don't have an account?
                   </h1>
                   <p className="text-center text-base text-body-color dark:text-body-color-dark">
-                  Sign up and start using our platform.
+                    Sign up and start using our platform.
                   </p>
                   <div className="mt-5 text-center">
-                  <Link href="/auth/signup">
-                    <button className="inline-flex items-center justify-center gap-2.5 rounded-full bg-black px-8 py-3 font-medium text-white transition-colors duration-300 ease-in-out hover:bg-gray-800 dark:bg-btndark dark:hover:bg-blackho">
-                    Sign Up
-                    </button>
-                  </Link>
+                    <Link href="/auth/signup">
+                      <button className="inline-flex items-center justify-center gap-2.5 rounded-full bg-black px-8 py-3 font-medium text-white transition-colors duration-300 ease-in-out hover:bg-gray-800 dark:bg-btndark dark:hover:bg-blackho">
+                        Sign Up
+                      </button>
+                    </Link>
                   </div>
                 </div>
               </motion.div>
@@ -189,12 +190,17 @@ const Signin = () => {
                     </div>
                   </div>
 
+                  {message &&
+                    <div className="mb-5 flex text-primary items-center justify-center">
+                      <p className="text-center">{message}</p>
+                    </div>
+                  }
                   <div className="mb-9 flex items-center justify-center">
                     <a href="#" className="text-sm font-bold border-b hover:text-primary hover:border-primary">
                       FORGOT PASSWORD?
                     </a>
                   </div>
-                  
+
                   {/* Sign In Button */}
                   <div className="flex flex-col gap-5 items-center mb-6">
                     <button
@@ -221,7 +227,6 @@ const Signin = () => {
                         />
                       </motion.svg>
                     </button>
-                    {message && <p className="mt-2 text-center">{message}</p>}
                     <div className="block md:hidden">
                       <p>Don't you have an account? <a href="/auth/signup" className="text-primary hover:text-primaryho">signup</a></p>
                     </div>

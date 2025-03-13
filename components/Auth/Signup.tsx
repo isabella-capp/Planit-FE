@@ -30,7 +30,8 @@ const Signup = () => {
         const result = await response.json();
       
         if (!response.ok) {
-          console.error('Sign up failed: ', result.message);
+          console.log('Sign up failed: ', result.message);
+          setMessage(result.message);
         } else {
           console.log('Sign up successful');
           window.location.href = '/auth/signin'; // Redirect to sign in
@@ -139,6 +140,12 @@ const Signup = () => {
                         className="w-full border-2 rounded-lg border-stroke bg-transparent p-3 focus:border-waterloo focus:placeholder:text-black focus-visible:outline-none dark:border-strokedark dark:focus:border-manatee dark:focus:placeholder:text-white" />
                     </div>
                   </div>
+                  
+                  {message &&
+                    <div className="mb-5 flex text-primary items-center justify-center">
+                      <p className="text-center">{message}</p>
+                    </div>
+                  }
 
                   {/* Sign Up Button */}
                   <div className="flex flex-col gap-5 items-center mb-6">
@@ -166,9 +173,8 @@ const Signup = () => {
                         />
                       </motion.svg>
                     </button>
-                    {message && <p className="mt-2 text-center">{message}</p>}
                     <div className="block md:hidden">
-                      <p>Already have an account? <a href="/auth/signin" className="text-primary hover:text-primaryho">signin</a></p>
+                      <p>Already have an account? <a href="/auth/signin" className="text-primary hover:text-primaryho">signin</a> </p>
                     </div>
                   </div>
                 </form>

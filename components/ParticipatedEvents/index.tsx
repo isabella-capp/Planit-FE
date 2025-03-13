@@ -13,7 +13,7 @@ interface Event {
     id: number;
 }
 
-const MyEvent = () => {
+const participatedEvents = () => {
     const { userId } = useSession()
     const [events, setEvents] = useState<Event[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -26,10 +26,13 @@ const MyEvent = () => {
             try {
                 setIsLoading(true);
 
-                const response = await fetch(`http://127.0.0.1:5000/private/user/admin/event`, {
-                    method: "GET",
+                const response = await fetch("http://127.0.0.1:5000/private/user/events", {
+                    method: "POST",
                     credentials: "include",
-                    headers: { "Content-Type": "application/json" }
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ userId }),
                 });
 
                 if (!response.ok) {
@@ -40,11 +43,11 @@ const MyEvent = () => {
 
                 if (data && data.events) {
                     const parsedEvents: Event[] = data.events.map((event: any) => ({
-                        id: event.id,  // Cambio il nome della chiave
-                        name: event.name,
-                        start_time: event.start_time,
-                        end_time: event.end_time,
-                        dates: event.dates ? JSON.parse(event.dates) : [], // Parsare JSON string → array
+                        id: event.event_id,  // Cambio il nome della chiave
+                        name: event.event_name,
+                        start_time: event.event_start_time,
+                        end_time: event.event_end_time,
+                        dates: event.event_dates ? JSON.parse(event.event_dates) : [], // Parsare JSON string → array
                     }));
 
                     setEvents(parsedEvents);
@@ -65,9 +68,9 @@ const MyEvent = () => {
         <section id="event" className="px-4 md:px-8 xl:px-10 ">
             <div className="relative mx-auto max-w-c-1390 px-7.5 pt-10 lg:px-15 lg:pt-15 xl:px-20 xl:pt-20 lg:flex-row">
             <div className="mt-10 mb-10 lg:mt-0">
-                <h2 className="text-sectiontitle4 mb-3 font-bold text-black dark:text-white">My Events</h2>
+                <h2 className="text-sectiontitle4 mb-3 font-bold text-black dark:text-white">Participated Events</h2>
                 <div className="flex flex-col gap-3 justify-end lg:flex-row">
-                    <p className="inline-flex items-center">Home <ChevronRight className="h-5" /> <span className="font-bold text-primary">myevents</span></p>
+                    <p className="inline-flex items-center">Home <ChevronRight className="h-5" /> <span className="font-bold text-primary"> participated-events </span></p>
                 </div>
             </div>
 
@@ -108,4 +111,4 @@ const MyEvent = () => {
     );
 };
 
-export default MyEvent;
+export default participatedEvents;
