@@ -143,18 +143,20 @@ export default function Dashboard() {
                         <div className="py-3 space-y-2 flex-grow">
                             {myEvents.length > 0 ? (
                                 myEvents.map((event) => (
-                                    <div key={event.id} className="flex items-center justify-between rounded-lg border border-gray-200 dark:border-gray-500 p-3">
-                                        <div className="space-y-1">
-                                            <p className="text-sm font-semibold text-strokedark dark:text-stroke">{event.name}</p>
-                                            <div className="flex flex-row gap-2 items-center">
-                                                <Clock10 width={12} height={12} />
-                                                <p className="text-xs"> {event.start_time} - {event.end_time}</p>
+                                    <Link key={event.id} href={`/event/${event.id}`} className="block w-full">
+                                        <div key={event.id} className="flex items-center justify-between rounded-lg border border-gray-200 dark:border-gray-500 p-3">
+                                            <div className="space-y-1">
+                                                <p className="text-sm font-semibold text-strokedark dark:text-stroke">{event.name}</p>
+                                                <div className="flex flex-row gap-2 items-center">
+                                                    <Clock10 width={12} height={12} />
+                                                    <p className="text-xs"> {event.start_time} - {event.end_time}</p>
+                                                </div>
                                             </div>
+                                            <span className="inline-flex items-center rounded-full border border-gray-200 dark:text-stroke dark:bg-blackho dark:border-gray-500 px-2.5 py-1 text-xs font-medium">
+                                                {event.partecipants} participants
+                                            </span>
                                         </div>
-                                        <span className="inline-flex items-center rounded-full border border-gray-200 dark:text-stroke dark:bg-blackho dark:border-gray-500 px-2.5 py-1 text-xs font-medium">
-                                            {event.partecipants} participants
-                                        </span>
-                                    </div>
+                                    </Link>
                                 ))
                             ) : (
                                 <div className="flex flex-grow items-center justify-center rounded-md border-2 border-dashed border-stroke dark:border-strokedark bg-zumthor dark:bg-btndark hover:bg-[#e6f1ff] hover:dark:bg-blackho h-full">
@@ -164,7 +166,7 @@ export default function Dashboard() {
                         </div>
                         <div className="pt-4 mt-auto">
                             <Link
-                                href="/myevents"
+                                href="/dashboard/myevents"
                                 className="flex w-full items-center justify-between text-sm font-medium hover:text-primary"
                             >
                                 View All <ChevronRight className="h-4 w-4" />
@@ -181,21 +183,23 @@ export default function Dashboard() {
                         <div className="py-4 space-y-2 flex-grow">
                             {participatedEvents.length > 0 ? (
                                 participatedEvents.map((event) => (
-                                    <div
-                                        key={event.id}
-                                        className="flex items-center rounded-lg border border-gray-200 dark:border-gray-500 p-3"
-                                    >
-                                        <div className="space-y-1">
-                                            <p className="text-sm font-semibold text-strokedark dark:text-stroke">{event.name}</p>
-                                            <div className="flex flex-row gap-2 items-center">
-                                                <Clock10 width={12} height={12} />
-                                                <p className="text-xs">
-                                                    {" "}
-                                                    {event.start_time} - {event.end_time}
-                                                </p>
+                                    <Link key={event.id} href={`/event/${event.id}`} className="block w-full">
+                                        <div
+                                            key={event.id}
+                                            className="flex items-center rounded-lg border border-gray-200 dark:border-gray-500 p-3"
+                                        >
+                                            <div className="space-y-1">
+                                                <p className="text-sm font-semibold text-strokedark dark:text-stroke">{event.name}</p>
+                                                <div className="flex flex-row gap-2 items-center">
+                                                    <Clock10 width={12} height={12} />
+                                                    <p className="text-xs">
+                                                        {" "}
+                                                        {event.start_time} - {event.end_time}
+                                                    </p>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </Link>
                                 ))
                             ) : (
                                 <div className="flex flex-grow items-center justify-center rounded-md border-2 border-dashed border-stroke dark:border-strokedark bg-zumthor dark:bg-btndark hover:bg-[#e6f1ff] hover:dark:bg-blackho h-full">
@@ -205,7 +209,7 @@ export default function Dashboard() {
                         </div>
                         <div className="pt-4 mt-auto">
                             <Link
-                                href="/participated-events"
+                                href="/dashboard/participated-events"
                                 className="flex w-full items-center justify-between text-sm font-medium hover:text-primary"
                             >
                                 View All <ChevronRight className="h-4 w-4" />

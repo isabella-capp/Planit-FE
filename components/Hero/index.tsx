@@ -60,7 +60,7 @@ const Hero = ({ userLogged, username }: UserLoggedProps) => {
 
                   {userLogged ? (
                     <a
-                      href="/myevents"
+                      href="/dashboard/myevents"
                       className="inline-flex items-center gap-2.5 rounded-full border-2 border-black bg-black px-6 py-2 font-medium text-white hover:opacity-90 dark:bg-white dark:text-black"
                     >
                       My Events
