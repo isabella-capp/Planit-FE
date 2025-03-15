@@ -14,10 +14,21 @@ interface Event {
     partecipants: number;
 }
 
+interface Results {
+    id: number
+    name: string
+    is_completed: boolean
+    final_date?: string
+    final_time?: string
+    participant_count: number
+    created_at: string
+}
+
 export default function Dashboard() {
     const { userId } = useSession()
     const [myEvents, setMyEvents] = useState<Event[]>([]);
     const [participatedEvents, setParticipatedEvents] = useState<Event[]>([]);
+    const [events, setEvents] = useState<Results[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -107,12 +118,53 @@ export default function Dashboard() {
         fetchUserEvents();
     }, [userId]);
 
+    useEffect(() => {
+        if (!userId) return;
 
-    const upcomingEvents = [
-        { id: 7, title: "Industry Conference", date: "2025-04-05", category: "Technology" },
-        { id: 8, title: "Charity Fundraiser", date: "2025-03-20", category: "Community" },
-        { id: 9, title: "Workshop Series", date: "2025-03-12", category: "Education" },
-    ]
+        const getEventResults = async () => {
+            try {
+                setIsLoading(true);
+                // Esegui la richiesta fetch all'endpoint
+                const response = await fetch(`http://127.0.0.1:5000/private/user/results/${userId}`);
+
+                // Verifica se la risposta è andata a buon fine
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.statusText}`);
+                }
+
+                // Ottieni i dati dalla risposta JSON
+                const data = await response.json();
+
+                // Verifica se sono presenti risultati
+                if (data.results) {
+                    console.log("Event Results:", data.results);
+                    const parsedEvents: Results[] = data.results.slice(0, 3).map((event: any) => {
+                        return {
+                            id: event.id,
+                            name: event.event_name,
+                            is_completed: event.is_completed,
+                            final_date: event.final_date || undefined,  // Imposto final_date se presente
+                            final_time: event.final_time || undefined,  // Imposto final_time se presente
+                            participant_count: event.partecipants || 0, // Imposto a 0 se non presente
+                            created_at: event.created_at || "", // Imposto a "" se non presente
+                        };
+                    });
+
+                    setEvents(parsedEvents);
+                } else {
+                    console.error("No results found for the event");
+                }
+            } catch (error) {
+                // Gestione degli errori
+                console.error("Failed to fetch event results:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+
+        getEventResults();
+    }, [userId]);
+
 
     return (
         <>
@@ -220,22 +272,39 @@ export default function Dashboard() {
                     {/* Upcoming Events Card */}
                     <div className="flex flex-col h-full rounded-lg bg-gradient-to-t border border-gray-200 dark:border-strokedark dark:bg-gradient-to-t dark:from-[#252a428d] dark:to-[#252A42] p-6 shadow-sm">
                         <div className="space-y-2 pb-2">
-                            <h3 className="text-xl font-semibold text-black dark:text-white">Upcoming Events</h3>
-                            <p>Events you might be interested in</p>
+                            <h3 className="text-xl font-semibold text-black dark:text-white">Final Results</h3>
+                            <p>View the results of the polls you participated in </p>
                         </div>
                         <div className="py-4 space-y-2">
-                            {upcomingEvents.slice(0, 3).map((event) => (
+                            {events.slice(0, 3).map((event) => (
                                 <div key={event.id} className="flex items-center rounded-lg border border-gray-200 dark:border-gray-500 p-3">
                                     <div className="space-y-1">
-                                        <p className="text-sm font-semibold text-strokedark dark:text-stroke">{event.title}</p>
-                                        <p className="text-xs">{new Date(event.date).toLocaleDateString()}</p>
+                                        <p className="text-sm font-semibold text-strokedark dark:text-stroke">{event.name}</p>
+                                        {event.is_completed ? (
+                                            <div className="flex flex-row gap-5 items-center">
+                                                <div className="flex items-center gap-2">
+                                                    <CalendarPlus width={12} height={12} />
+                                                    <p className="text-xs">
+                                                        {event.final_date}
+                                                    </p>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <Clock10 width={12} height={12} />
+                                                    <p className="text-xs">
+                                                        {event.final_time}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <p className="text-xs">Poll still open</p>
+                                        )}
                                     </div>
                                 </div>
                             ))}
                         </div>
                         <div className="pt-4">
                             <Link
-                                href="/upcoming"
+                                href="/dashboard/results"
                                 className="flex w-full items-center justify-between text-sm font-medium hover:text-primary"
                             >
                                 View All <ChevronRight className="h-4 w-4" />
