@@ -22,7 +22,7 @@ Planit makes the event organization process more transparent and collaborative, 
   ```
 3. Start the server
   ```cmd
-   npm run dev ...
+   npm run dev 
   ```
 Open the browser and go to http://localhost:3000
 
